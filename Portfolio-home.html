@@ -2,22 +2,16 @@
 
 
 <head>
-
+ 
+   
     <title> Home </title>
     <h1> Jop Zinzen </h1>
     <h2> Software developer Portfolio </h2>
 
-    <a href="Portfolio-Projecten.html">
-    <button>Projecten</button>
-    </a>
-
-    <a href="Portfolio-Over-mij.html">
-    <button>Over mij</button>
-    </a>
-
-    <a href="Portfolio-Contact.html">
-    <button>Contact</button>
-    </a>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reveal Text Button</title>
+    <link rel="stylesheet" href="Portfolio-styling.css">
 
     
 </head>
@@ -25,9 +19,30 @@
 <body>
 
     <p>
-        Mijn naam is Jop Zinzen, ik ben 20 jaar oud en studeer software develpment bij het vista college.<br>
-        Dit is mijn vierde en laatste jaar van de opleiding, Tijdens het derde jaar was ik stagiair bij het bedrijf ZeroPPM.
+        Mijn naam is Jop Zinzen, ik ben 20 jaar oud en studeer software development bij het Vista college.<br>
+        Dit is mijn vierde en laatste jaar van de opleiding. Tijdens het derde jaar was ik stagiair bij het bedrijf ZeroPPM.<br>
+        Zero-PPM is een bedrijf gespecialiseerd in Cognex apparatuur. Cognex is een internationaal camera bedriijf voor logistiek.<br>
+        Deze zeer geaavanceerde apparatuur wordt dan op locatie geinstaleerd bijv: DHL in Brussel airport. <br>
+        Momenteel werk ik bij Friterie Kunderkruis, dit is het bedrijf van mijn ouders en daar werk ik al zes jaar<br>
+        In mijn vrije tijd ga ik graag skiën, maar ik kan niet in het carnavals seizoen gaan, want dan word ik verwacht bij V.V. de Durchstropere, waar ik graag mee op stap ga.
     </p>
+
+    <div class="media-scroller">
+
+        <a href="Project-Portfolio.html">
+            <button>Mijn portfolio</button>
+        </a>
+        
+        <a href="Project-Burger.html">
+        <button>Burger-Zoo</button>
+        </a>
+    
+    </div>
+
+    <button id="revealButton">Show Text</button>
+    <div id="text" class="hidden">This is the text that was hidden!</div>
+  
+    <script src="script.js"></script>
 
 </body>
 

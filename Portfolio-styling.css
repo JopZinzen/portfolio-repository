@@ -1,0 +1,17 @@
+.media-scroller {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 20%;
+}
+
+/* Style for the hidden text */
+.hidden {
+    display: none;
+  }
+  
+  /* Optional: Button styling */
+  button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
