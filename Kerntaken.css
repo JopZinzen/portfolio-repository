@@ -1,0 +1,22 @@
+h1{
+    text-align: center
+}
+
+h3{
+    left: 250px;
+    text-align: left 
+}
+.container {
+    width: 200px;   
+    position: relative;
+    background-color: #f0f0f0;
+  }
+
+  /* De tekst zelf centreren */
+  .text {
+    position: absolute;
+    left: 200px; /* Start op 200px vanaf de linkerzijde */
+    width: 1000px; /* Breedte van het tekstvak */
+    text-align: left; /* Centraal in het tekstvak */  
+    
+  }

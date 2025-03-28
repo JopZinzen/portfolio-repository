@@ -22,3 +22,6 @@ body {
 .project:hover {
     transform: scale(1.05);
 }
+li {
+    display: inline;
+  }

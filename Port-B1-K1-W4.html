@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<head>   
+    <title>B1-K1-W4</title>
+    <link rel="stylesheet" href="Menu.css">
+    <link rel="stylesheet" href="Kerntaken.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <nav class="sidebar">
+            <ul>
+                <li><a href="Port-B1-K1-W1.html">B1-K1-W1</a></li>
+                <li><a href="Port-B1-K1-W2.html">B1-K1-W2</a></li>
+                <li><a href="Port-B1-K1-W3.html">B1-K1-W3</a></li>
+                <li><a href="Port-B1-K1-W4.html">B1-K1-W4</a></li>
+                <li><a href="Port-B1-K1-W5.html">B1-K1-W5</a></li>
+                <li><a href="Port-B1-K2-W1.html">B1-K2-W1</a></li>
+                <li><a href="Port-B1-K2-W2.html">B1-K2-W2</a></li>
+                <li><a href="Port-B1-K2-W3.html">B1-K2-W3</a></li>                
+            </ul>
+        </nav>   
+    </div>
+
+    <h1>B1-K1-W4</h1>
+    <div class="text">
+        <h2>Testplan voor de currency converter</h2>
+
+        <h3>
+            De Functionaliteiten van de Currency Converter<br><br>
+
+            bij enter amount: <br>
+            de gebruiker kan een getal invullen, maar geen letter of woord.
+            De gebruiker hoort een melding/waarschuwing binnen te krijgen wanneer er geen getal is ingevuld en er op de "convert" button word geklikt. <br>in de melding staat: Please enter currency.<br><br>
+
+            Bij From:<br>
+            De gebruiker kan een valuta selecteren, deze moet eerst worden aangemaakt/toegevoegd bij het Currency Master tabblad<br>
+            De gebruiker hoort een melding/waarschuwing binnen te krijgen wanneer er "--SELECT--" staat/ geen valuta is gekozen en er op de "convert" button word geklikt. in de melding staat: Please select from currency.<br><br>
+
+           
+
+
+            Bij To:<br>
+            de gebruiker kan een tweede valuta selecteren, deze moet eerst worden aangemaakt/toegevoegd het Currency Master tabblad<br>
+            De gebruiker hoort een melding/waarschuwing binnen te krijgen wanneer er "--SELECT--" staat/ geen valuta is gekozen en er op de "convert" button word geklikt . in de melding staat: Please select from currency.<br><br>
+
+           
+           
+
+
+
+            Bij Convert<br>
+            Geeft een foutmelding wanneer er niks is ingevuld bij "enter amount:" en bij "From:, en/of "To: "--SELECT--" is geselecteerd en er op "Convert:" word geklikt<br>
+            Wanneer er bij "Enter amount:" een getal is ingevuld en bij "From:" en "To:" een valuta is geselecteerd en er op de "Convert" button word geklikt. komt er boven het schema een getal met de valuta die bij "To:" was geselecteerd.<br><br>
+
+           
+
+
+            Bij Clear <br>
+            Als er op clear wordt geklikt dan gaat "Enter Amount:" terug naar geen getal te hebben en gaan "From:" en "To:" terug naar "--SELECT--". als er een getal staat boven het schema dan word deze verwijdert.<br>
+            Als er nog niks was ingevuld gebeurt er niks.<br><br>
+
+           
+
+
+            De functionaliteiten van de Currency Master<br><br>
+
+            Bij Enter Amount:<br>
+            De gebruiker kan een getal invullen, maar geen letter of woord, dan zou de applicatie crashen.<br>
+            De gebruiker hoort een melding/waarschuwing binnen te krijgen wanneer er geen getal is ingevuld en er op de "Save" button word geklikt. in de melding staat: Please enter amount.<br><br>
+
+           
+
+
+
+
+            Bij Currency Name:<br>
+            De gebruiker kan een valuta een naam geven, dit forceerd "caps lock". en hier kunnen geen nummers worden ingevuld, aanngezien dit een naam is.<br>
+            De gebruiker hoort een melding/waarschuwing binnen te krijgen wanneer er geen Naam is ingevuld en er op de "Save" button word gekliktkomt een melding waar bij staat: Please enter from currency name.<br><br>
+
+           
+
+
+            Bij Save <br>
+            Geeft een foutmelding wanneer er niks is ingevuld bij "enter amount:" en/of "Currency Name: en er op "Save" word geklikt<br>
+            Wanneer er bij "Enter amount:" een getal is ingevuld en bij  "Currency Name:" een naam is ingevuld en er op de "Save" button word geklikt. komt er onder in het schema een getal met de valuta die bij "Currency Name:" een naam kreeg. <br>
+            en geef een melding waar in staat: "are you sure you want to save?" als er op "yes" word geklikt komt er een melding met de tekst: "Data saved successfully". <br>
+            waneer er op "no" wordt geklikt verwijder het getal en de naam die bij "Enter Amount" en "Currency Name" staan en haal de melding weg.<br><br>
+
+          
+
+            Bij Cancel<br>
+            Als er op "Cancel" wordt geklikt dan gaat "Enter Amount:" terug naar geen getal te hebben en gaat "Currency Name:" terug naar niks.<br>
+            Als er nog niks was ingevuld gebeurt er niks.<br><br>
+
+           
+
+
+
+            Bij de Database tabel<br> 
+            als er geklikt word op een nummer in "Amount" of een naam bij "Currency Name" en de gebruiker vult een nieuwe naam en/of getal in bij "Enter Amount" of "Currency Name", geef dan de melding: "Are you sure you want to Update?"<br><br> 
+            Wanneer er op "Yes" word geklikt, geef dan de melding: "Data updated successfully". als er op "no" word geklikt, verwijder het getal en de naam die bij "Enter Amount" en "Currency Name" staan en haal de melding weg.<br><br> 
+            als er op "amount" word geklikt word de lijst op volgorde van klein naar groot gesorteerd, als er nog een keer op  "amount" word geklikt word de lijst op volgorde van groot naar klein gesorteerd.<br><br> 
+            als er op "Currency Name" word geklikt word de lijst op volgorde A-Z gesorteerd,als er nog een keer op  "Currency Name" word geklikt word de lijst op volgorde Z-A gesorteerd.<br><br> 
+            Als er op "amount" word geklikt, maar daarna op "Currency Name" dan word de lijst gesorteerd op A-Z. Andersom Wordt de lijst gesorteerd van klein naar groot getal.<br><br>
+
+            
+
+
+
+            Hoe worden de functionaliteiten getest: <br>
+            Ik ga de functionaliteiten handmatig testen. Dit doe ik door alles na te lopen wat er in mijn testplan
+            staat. <br>
+
+            currency converter main:<br> <br> 
+
+            Bij enter amount<br><br> 
+            
+
+            een getal invullen bij Enter Amount.<br>
+            Resultaat:<br> 
+           
+            een letter invullen bij Enter Amount.<br>
+            Resultaat:<br> 
+
+            een getal invullen bij Enter Amount en klikken op Convert.<br>
+            Resultaat:<br> 
+           
+            een letter invullen bij Enter Amount en klikken op Convert.<br>
+            Resultaat:<br> 
+
+            Niks invullen bij Enter Amount en klikken op Convert.<br>
+            Resultaat:<br> <br> 
+
+            bij From:<br> <br> 
+            Een valuta selecteren.<br> 
+            --SELECT-- kunnen selecteren nadat een valuta is geselecteerd.<br> 
+            --SELECT-- selecteren en op convert klikken.<br> <br> 
+            
+
+            Bij To:<br> <br> 
+            Een valuta selecteren. <br> 
+            --SELECT-- kunnen selecteren nadat een valuta is geselecteerd.<br> 
+            --SELECT-- selecteren en op convert klikken.<br> 
+
+            bij Convert<br> <br> 
+            niks invullen bij "enter amount" en op convert klikken<br> 
+            "From:" op --SELECT-- laten  en op convert klikken<br> 
+            "To:" op --SELECT-- laten en op convert klikken<br> 
+            niks invullen bij "enter amount", "From:" op --SELECT-- en "To" op --SELECT-- laten en op convert klikken<br> <br> 
+            een getal invullen bij "enter amount", "From:" op --SELECT-- en "To" op --SELECT-- laten en op convert klikken<br> <br> 
+            een getal invullen bij "enter amount",  bij "From:" een valuta kiezen en "To" op --SELECT-- laten en op convert klikken<br> <br> 
+            een getal invullen bij "enter amount",  "From:" op --SELECT-- laten en bij "To:" een valuta kiezen en op convert klikken<br> <br> 
+            niks invullen bij "enter amount", bij "From:" een valuta kiezen en "To" op --SELECT-- laten en op convert klikken<br> <br> 
+            niks invullen bij "enter amount", bij "From:" een valuta kiezen en  "To:" een valuta kiezen en op convert klikken<br> <br> 
+            niks invullen bij "enter amount", "From:" op --SELECT-- en "To:" een valuta kiezen en op convert klikken<br> <br> 
+            een getal invullen bij "enter amount", bij "From:" een valuta kiezen en bij "To:" een valuta kiezen en op convert klikken<br> <br> 
+
+
+            Bij Clear <br> <br> 
+            Niks invullen bij "Enter Amount" en op clear klikken<br> 
+            Een getal invullen bij "Enter Amount" en op clear klikken<br> 
+            bij "From:" "--SELECT--" laten staan en op clear klikken<br> 
+            Bij "From:" een valuta selecteren en op clear klikken<br> 
+            bij "To:" "--SELECT--" laten staan en op clear klikken<br> 
+            Bij "To:" een valuta selecteren en op clear klikken<br> <br> 
+
+
+            Currency master/ Database:<br><br> 
+
+            Bij Currency amount:<br> <br> 
+            een getal invullen bij Enter Amount.<br>
+            Resultaat:
+           
+            een letter invullen bij Enter Amount.<br>
+            Resultaat:<br> 
+
+            een getal invullen bij Enter Amounten en klikken op Save.<br>
+            Resultaat:<br> 
+           
+            een letter invullen bij Enter Amount en klikken op Save.<br>
+            Resultaat:<br> 
+
+            Niks invullen bij Enter Amount en op Convert klikken.<br>
+            Resultaat:<br> <br> 
+
+            Bij Currency Name:<br> <br> 
+            Niks invullen en op Save klikken.<br> 
+            Een naam invullen en op Save klikken.<br> 
+            met caps lock aan een naam invullen<br> 
+            met caps lock uit een naam invullen<br> <br> 
+
+            Bij save<br> <br> 
+            Wanneer er geen getal is ingevuld op Save klikken<br> 
+            Wanneer er een getal is ingevuld op Save klikken<br> 
+            Wanneer er geen getal maar wel een naam is ingevuld op Save klikken<br> 
+            Wanneer er geen getal en geen naam is ingevuld op Save klikken<br> 
+            wanneer er een getal en geen naam is ingevuld op Save klikken<br> 
+            Wanneer er een getal en een naam is ingevuld op Save klikken<br> <br>
+            
+            Bij Cancel<br> <br> 
+            Wanneer er geen getal is ingevuld op Cancel klikken<br> 
+            Wanneer er een getal is ingevuld op Cancel klikken<br> 
+            Wanneer er geen getal maar wel een naam is ingevuld op Cancel klikken<br> 
+            Wanneer er geen getal en geen naam is ingevuld op Cancel klikken<br> 
+            wanneer er een getal en geen naam is ingevuld op Cancel klikken<br> 
+            Wanneer er een getal en een naam is ingevuld op Cancel klikken<br> 
+
+            bij de Database tabel <br><br>
+            op een nummer klikken bij "Amount", "Enter Amount" een getal invullen en "Enter Name" leeg laten en op save klikken<br><br>
+            op een nummer klikken bij "Amount", "Enter Amount" leeg laten en bij "Enter Name" een naam invullen en op save klikken<br><br>
+            op een nummer klikken bij "Amount", "Enter Amount" een getal invullen en bij "Enter Name" een naam invullen en op save klikken<br.<br>
+
+            op een naam klikken bij "Amount", "Enter Amount" een getal invullen en "Enter Name" leeg laten en op save klikken<br><br>
+            op een naam klikken bij "Amount", "Enter Amount" leeg laten en bij "Enter Name" een naam invullen en op save klikken<br><br>
+            op een naam klikken bij "Amount", "Enter Amount" een getal invullen en bij "Enter Name" een naam invullen en op save klikken<br><br>
+            
+            op een nummer klikken bij "Amount", "Enter Amount" een getal invullen en "Enter Name" leeg laten en op save klikken en op "yes" klikken<br><br>
+            op een nummer klikken bij "Amount", "Enter Amount" leeg laten en bij "Enter Name" een naam invullen en op save klikken en op "yes" klikken<br><br>
+            op een nummer klikken bij "Amount", "Enter Amount" een getal invullen en bij "Enter Name" een naam invullen en op save klikken en op "yes" klikken<br><br>
+
+            op een nummer klikken bij "Amount", "Enter Amount" een getal invullen en "Enter Name" leeg laten en op save klikken en op "no" klikken<br><br>
+            op een nummer klikken bij "Amount", "Enter Amount" leeg laten en bij "Enter Name" een naam invullen en op save klikken en op "no" klikken<br><br>
+            op een nummer klikken bij "Amount", "Enter Amount" een getal invullen en bij "Enter Name" een naam invullen en op save klikken en op "no" klikken<br><br>
+
+            op een naam klikken bij "Amount", "Enter Amount" een getal invullen en "Enter Name" leeg laten en op save klikken en op "yes" klikken<br><br>
+            op een naam klikken bij "Amount", "Enter Amount" leeg laten en bij "Enter Name" een naam invullen en op save klikken en op "yes" klikken<br><br>
+            op een naam klikken bij "Amount", "Enter Amount" een getal invullen en bij "Enter Name" een naam invullen en op save klikken en op "yes" klikken<br><br>
+
+            op een naam klikken bij "Amount", "Enter Amount" een getal invullen en "Enter Name" leeg laten en op save klikken en op "no" klikken<br><br>
+            op een naam klikken bij "Amount", "Enter Amount" leeg laten en bij "Enter Name" een naam invullen en op save klikken en op "no" klikken<br><br>
+            op een naam klikken bij "Amount", "Enter Amount" een getal invullen en bij "Enter Name" een naam invullen en op save klikken en op "no" klikken<br><br>
+
+
+
+
+            
+        </h3>
+        
+
+
+
+
+
+    </div>
+
+</body>
+
+</html>
