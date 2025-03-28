@@ -1,0 +1,40 @@
+.container {
+    display: flex;
+}
+
+.sidebar {
+    width: 200px;
+    background: #f4f4f4;
+    padding: 20px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    overflow-y: auto;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    padding: 10px;
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+
+.sidebar ul li a:hover {
+    color: blue;
+}
+
+.content {
+    margin-left: 220px;
+    padding: 20px;
+}
+
+
