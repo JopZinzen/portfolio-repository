@@ -1,0 +1,38 @@
+body {
+    font-family: Arial, sans-serif;
+    
+  }
+  
+  .plattegrond-container {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .plattegrond-afbeelding {
+    display: block;
+    width: 600px; /* pas eventueel aan aan resolutie */
+    height: auto;
+  }
+  
+  .tafel {
+    position: absolute;
+    padding: 10px 14px;
+    border-radius: 50%;
+    background-color: rgba(0, 128, 0, 0.8);
+    color: white;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+  }
+  
+  .tafel:hover {
+    background-color: rgba(0, 100, 0, 1);
+  }
+  
+  #reserveringsformulier {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #ccc;
+    display: none;
+  }
