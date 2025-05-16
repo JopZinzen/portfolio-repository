@@ -4,27 +4,28 @@ body {
   }
   
   .plattegrond-container {
-    position: relative;
-    display: inline-block;
-  }
+  position: relative;
+  width: 1250px;           
+  height: 650px;          
+  background-color: #f68c4f;  
+  margin: 0 auto;        
+  border: 2px solid #000; 
+}
   
-  .plattegrond-afbeelding {
-    display: block;
-    width: 600px; /* pas eventueel aan aan resolutie */
-    height: auto;
-  }
   
-  .tafel {
-    position: absolute;
-    padding: 10px 14px;
-    border-radius: 50%;
-    background-color: rgba(0, 128, 0, 0.8);
-    color: white;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    transform: translate(-50%, -50%);
-  }
+  
+ .tafel {
+  position: absolute;
+  width: 44px;            /* vaste breedte */
+  height: 50px;           /* vaste hoogte */
+  background-color: green;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 50%;     /* rond */
+  cursor: pointer;
+  transform: translate(-50%, -50%); /* centreren rond positie */
+}
   
   .tafel:hover {
     background-color: rgba(0, 100, 0, 1);
@@ -36,3 +37,56 @@ body {
     border-top: 2px solid #ccc;
     display: none;
   }
+
+.navigatie {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.navigatie button {
+  padding: 10px 15px;
+  margin: 0 5px;
+  border: none;               
+  background-color: #302d2d; 
+  color: white; 
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.navigatie button:hover {
+  background-color: #161615;  
+}
+
+.tafel.negen{
+  position: absolute;
+  width: 80px;
+  height: 350px;
+  border-radius: 6px;
+  padding: 0;
+}
+
+.tafel.tien {
+  position: absolute;
+  width: 350px;
+  height: 60px;
+  border-radius: 6px;
+  padding: 0;
+}
+
+
+.tafel.elf {
+  position: absolute;
+  width: 60px;
+  height: 160px;
+  border-radius: 0px;
+  padding: 0;
+}
+
+.tafel.elf.twee {
+  position: absolute;
+  width: 280px;
+  height: 60px;
+  border-radius: 6px;
+  padding: 0;
+}
