@@ -16,19 +16,19 @@ body {
   
  .tafel {
   position: absolute;
-  width: 44px;            /* vaste breedte */
-  height: 50px;           /* vaste hoogte */
-  background-color: green;
+  width: 44px;          
+  height: 50px;          
+  background-color: rgb(104, 6, 6);
   color: white;
   font-weight: bold;
   border: none;
-  border-radius: 50%;     /* rond */
+  border-radius: 50%;     
   cursor: pointer;
-  transform: translate(-50%, -50%); /* centreren rond positie */
+  transform: translate(-50%, -50%); 
 }
   
   .tafel:hover {
-    background-color: rgba(0, 100, 0, 1);
+    background-color: rgb(131, 8, 8);
   }
   
   #reserveringsformulier {
