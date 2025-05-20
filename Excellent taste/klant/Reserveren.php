@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <title>Reservering bevestigd</title>
     <link rel="stylesheet" href="Plattegrond.css">
 </head>
+
 <body>
 
 <div class="navigatie">
@@ -13,11 +14,13 @@
     <a href="OveronsET.html"><button>Over ons</button></a>
 </div>
 
+</html>
+
 <?php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Verbinding met database
+
 $host = "localhost";
 $db = "restaurant";
 $user = "root";
@@ -29,12 +32,7 @@ if ($conn->connect_error) {
     die("Verbinding mislukt: " . $conn->connect_error);
 }
 
-// Debug: bekijk wat er binnenkomt
-echo "<pre>";
-var_dump($_POST);
-echo "</pre>";
 
-// Gegevens uit formulier
 $naam = $_POST['naam'] ?? '';
 $datum = $_POST['datum'] ?? '';
 $tijd = $_POST['tijd'] ?? '';
