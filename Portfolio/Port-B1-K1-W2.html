@@ -4,6 +4,7 @@
     <title>B1-K1-W2</title>
     <link rel="stylesheet" href="Menu.css">
     <link rel="stylesheet" href="Kerntaken.css">
+    <link rel="ImageStylesheet" href="images.css">
 </head>
 
 <body>
@@ -28,21 +29,16 @@
      
     <h2>Dit zijn de wireframes van het Burger-Project</h2>
 
-       <img src="/account_mobile/Accountmobile1.png" >
-       <img src="/account_mobile/Accountmobile2.png" >
-       <img src="/account_mobile/Accountmobile3.png" >
+  <button class="toggleGroup" data-target="W2">Toon Groep W2</button>
 
-       <img src="Account_pagina_desktop/acountdesktop1.png" >
-       <img src="Account_pagina_desktop/accountdesktop2.png">
-       <img src="Account_pagina_desktop/accountdesktop3.png">
-
-       <img src="Burger_zoo_mobile/mainmobile1.png">
-       <img src="Burger_zoo_mobile/mainmobile2.png">
-       <img src="Burger_zoo_mobile/mainmobile3.png">
-
-       <img src="Burger_Zoo_desktop/maindesktop1.png">
-       <img src="Burger_Zoo_desktop/maindesktop2.png">
-       <img src="Burger_Zoo_desktop/maindesktop3.png">
+    <div id="W2" class="hidden imageGroup">
+        <img id="W2Image" src="account_mobile/Accountmobile1.png" alt="W2 Images" />
+        <div>
+        <button class="prevBtn" data-group="W2">Vorige</button>
+        <button class="nextBtn" data-group="W2">Volgende</button>
+        </div>
+    </div>
+      
 
     <h2>Dit is de MoSCoW van mijn portfolio</h2>
 
@@ -76,6 +72,7 @@
         Een logo maken en toevoegen. </h3>
 
     <h2>Dit is de Use case diagram van het Burger Project</h2>
+       <script src="images.js"></script> 
 
 </body>
 
