@@ -1,0 +1,92 @@
+body {
+    font-family: Arial, sans-serif;
+    
+  }
+  
+  .plattegrond-container {
+  position: relative;
+  width: 1250px;           
+  height: 650px;          
+  background-color: #f68c4f;  
+  margin: 0 auto;        
+  border: 2px solid #000; 
+}
+  
+  
+  
+ .tafel {
+  position: absolute;
+  width: 44px;          
+  height: 50px;          
+  background-color: rgb(104, 6, 6);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 50%;     
+  cursor: pointer;
+  transform: translate(-50%, -50%); 
+}
+  
+  .tafel:hover {
+    background-color: rgb(131, 8, 8);
+  }
+  
+  #reserveringsformulier {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #ccc;
+    display: none;
+  }
+
+.navigatie {
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.navigatie button {
+  padding: 10px 15px;
+  margin: 0 5px;
+  border: none;               
+  background-color: #302d2d; 
+  color: white; 
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.navigatie button:hover {
+  background-color: #161615;  
+}
+
+.tafel.negen{
+  position: absolute;
+  width: 80px;
+  height: 350px;
+  border-radius: 6px;
+  padding: 0;
+}
+
+.tafel.tien {
+  position: absolute;
+  width: 350px;
+  height: 60px;
+  border-radius: 6px;
+  padding: 0;
+}
+
+
+.tafel.elf {
+  position: absolute;
+  width: 60px;
+  height: 160px;
+  border-radius: 0px;
+  padding: 0;
+}
+
+.tafel.elf.twee {
+  position: absolute;
+  width: 280px;
+  height: 60px;
+  border-radius: 6px;
+  padding: 0;
+}
