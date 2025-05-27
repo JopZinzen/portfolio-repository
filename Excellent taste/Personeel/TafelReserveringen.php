@@ -1,5 +1,5 @@
 <?php
-$tafel = $_GET['tafel'] ?? null;
+$tafel = $_GET['table'] ?? null;
 
 if (!$tafel) {
     echo "<p>Geen tafel opgegeven.</p>";
@@ -7,7 +7,7 @@ if (!$tafel) {
 }
 
 $host = "localhost";
-$db = "restaurant";
+$db = "PersoneelLogin";	
 $user = "root";
 $pass = "";
 
@@ -26,28 +26,13 @@ $stmt->bind_param("i", $tafel);
 $stmt->execute();
 $result = $stmt->get_result();
 
-echo "<h3>Reserveringen voor tafel $tafel:</h3>";
-if ($result->num_rows > 0) {
-    echo "<table border='1' cellpadding='6'>
-            <tr>
-              <th>Naam</th>
-              <th>Datum</th>
-              <th>Tijd</th>
-              <th>Personen</th>
-            </tr>";
-    while ($row = $result->fetch_assoc()) {
-        echo "<tr>
-                <td>{$row['naam']}</td>
-                <td>{$row['datum']}</td>
-                <td>{$row['tijd']}</td>
-                <td>{$row['personen']}</td>
-              </tr>";
-    }
-    echo "</table>";
-} else {
-    echo "<p>Geen reserveringen gevonden.</p>";
+$reservations = [];
+while ($row = $result->fetch_assoc()) {
+    $reservations[] = $row;
 }
 
-$stmt->close();
+header('Content-Type: application/json');
+echo json_encode($reservations);
+
 $conn->close();
 ?>

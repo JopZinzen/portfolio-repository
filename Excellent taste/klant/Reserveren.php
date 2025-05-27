@@ -22,7 +22,7 @@ error_reporting(E_ALL);
 
 
 $host = "localhost";
-$db = "restaurant";
+$db = "PersoneelLogin";
 $user = "root";
 $pass = "";
 
