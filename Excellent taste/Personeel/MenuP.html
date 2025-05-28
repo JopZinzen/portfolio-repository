@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Menu Beheer</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; }
+        input[type="text"], input[type="number"] { width: 100%; }
+    </style>
+</head>
+<body>
+    <h2>Menu Items</h2>
+    <table id="menuTable">
+        <thead>
+            <tr><th>Naam</th><th>Beschrijving</th><th>Prijs</th><th>Acties</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <h3>Nieuw menu item toevoegen</h3>
+    <form id="addForm">
+        <input type="text" id="name" placeholder="Naam" required>
+        <input type="text" id="description" placeholder="Beschrijving">
+        <input type="number" id="price" placeholder="Prijs" step="0.01" required>
+        <button type="submit">Toevoegen</button>
+    </form>
+   
+    <script src="MenuP.js"></script>
+       
+</body>
+</html>
