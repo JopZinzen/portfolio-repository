@@ -16,7 +16,7 @@ if ($conn->connect_error) {
     die("Verbinding mislukt: " . $conn->connect_error);
 }
 
-$sql = "SELECT naam, datum, tijd, personen 
+$sql = "SELECT id, naam, datum, tijd, personen 
         FROM reserveringen 
         WHERE tafel = ? 
         ORDER BY datum ASC, tijd ASC";
