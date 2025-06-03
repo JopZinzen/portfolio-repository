@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+
+<head>
+
+</head>
+
+<body>
+    
+    <div id="bewerkFormulier" class="modal">
+        <div class="modal-content">
+         <h3>Reservering bewerken</h3>
+            <form id="editForm">
+             <input type="hidden" id="editId">
+                Naam: <input type="text" id="editNaam"><br>
+                Datum: <input type="date" id="editDatum"><br>
+                Tijd: <input type="time" id="editTijd"><br>
+                Personen: <input type="number" id="editPersonen" min="1"><br>
+                <button type="submit">Opslaan</button>
+                <button type="button" onclick="sluitBewerkFormulier()">Annuleren</button>
+            </form>
+        </div>
+    </div>
+
+</body>

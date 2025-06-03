@@ -1,6 +1,7 @@
 function openFormulier(tafelNummer) {
-    document.getElementById('tafelnummer').textContent = "Tafel " + tafelNummer;
-    document.getElementById('reserveringsformulier').style.display = 'block';
+     console.log("openFormulier aangeroepen met:", tafelNummer);
+    document.getElementById('tafelnummer-form').textContent = tafelNummer;
+    document.getElementById('reserveringsformulier').style.display = 'flex';
     document.getElementById("tafel").value = tafelNummer; 
 }
 
@@ -12,3 +13,5 @@ function checktafel() {
     }
     return true;
 }
+
+window.openFormulier = openFormulier;

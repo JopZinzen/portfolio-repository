@@ -22,21 +22,40 @@ function openFormulier(tafelNummer) {
             } else {
                 let html = `<h3>Reserveringen voor tafel ${tafelNummer}</h3><ul>`;
                 data.forEach((res) => {
-                html += `<li>
-                 ${res.datum} ${res.tijd} - ${res.naam} (${res.personen} personen)
-                 <button onclick="bewerkReservering(${res.id})">Bewerk</button>
-                 <button onclick="verwijderReservering(${res.id}, ${tafelNummer})">Verwijder</button>
-                </li>`;
-            });
+                    html += `<li>
+                        ${res.datum} ${res.tijd} - ${res.naam} (${res.personen} personen)
+                        <button onclick="bewerkReservering(${res.id})">Bewerk</button>
+                        <button onclick="verwijderReservering(${res.id}, ${tafelNummer})">Verwijder</button>
+                        <button onclick="noShowReservering(${res.id}, ${tafelNummer})">No Show</button>
+                    </li>`;
+                });
                 html += `</ul>`;
                 overzicht.innerHTML = html;
             }
         });
 }
 
+fetch('bewerkFormulier.html')
+  .then(response => response.text())
+  .then(html => {
+    document.getElementById('formulierContainer').innerHTML = html;
+});
 
-
-
+function noShowReservering(id, tafelNummer) {
+    if (confirm('Wil je deze reservering als No Show markeren?')) {
+        fetch(`NoShowReservering.php?id=${id}`, { method: 'POST' })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Reservering toegevoegd aan No Show lijst!');
+                    openFormulier(tafelNummer);
+                } else {
+                    alert('Toevoegen aan No Show lijst mislukt.');
+                }
+            });
+    }
+}
+window.noShowReservering = noShowReservering;
 
 
 function bewerkReservering(id) {
