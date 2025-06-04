@@ -1,4 +1,5 @@
 let huidigeReserveringen = [];
+let isDragging = false;
 
 function openFormulier(tafelNummer) {
     document.getElementById('tafelnummer').textContent = "Tafel " + tafelNummer;
@@ -34,6 +35,118 @@ function openFormulier(tafelNummer) {
             }
         });
 }
+
+function tafelToevoegen() {
+    
+    const plattegrond = document.querySelector('.plattegrond-container');
+    const nieuwNummer = document.querySelectorAll('.tafel').length + 1;
+    const btn = document.createElement('button');
+    btn.className = 'tafel';
+    btn.style.position = 'absolute';
+    btn.style.left = '100px';
+    btn.style.top = '100px';
+    btn.textContent = nieuwNummer;
+    btn.setAttribute('onclick', `openFormulier(${nieuwNummer})`);
+    plattegrond.appendChild(btn);
+
+      fetch('TafelOpslaan.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            actie: 'toevoegen',
+            nummer: nieuwNummer,
+            left: 100,
+            top: 100
+        })
+    });
+    maakTafelDraggable(btn);
+
+    btn.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    if (confirm('Tafel verwijderen?')) {
+        btn.remove();
+        fetch('TafelOpslaan.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                actie: 'verwijderen',
+                nummer: btn.textContent
+            })
+        });
+    }
+});
+   
+};
+
+
+// Maak een tafel draggable
+
+
+function maakTafelDraggable(btn) {
+    btn.onmousedown = function(e) {
+        e.preventDefault();
+        if (e.button !== 0) return; // alleen slepen met linkermuisknop
+
+        let shiftX = e.clientX - btn.getBoundingClientRect().left;
+        let shiftY = e.clientY - btn.getBoundingClientRect().top;
+
+        function moveAt(pageX, pageY) {
+            btn.style.left = pageX - shiftX + 'px';
+            btn.style.top = pageY - shiftY + 'px';
+        }
+
+        function onMouseMove(e) {
+            isDragging = true;
+            moveAt(e.pageX, e.pageY);
+        }
+
+        document.addEventListener('mousemove', onMouseMove);
+
+        function onMouseUp() {
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+            btn.onmouseup = null;
+            setTimeout(() => { isDragging = false; }, 0);
+            // Sla nieuwe positie op:
+            fetch('TafelOpslaan.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    actie: 'verplaatsen',
+                    nummer: btn.textContent,
+                    left: parseInt(btn.style.left),
+                    top: parseInt(btn.style.top)
+                })
+            });
+        }
+
+        document.addEventListener('mouseup', onMouseUp);
+    };
+    btn.ondragstart = () => false;
+}
+
+
+
+
+// Pas draggable en verwijderbaar toe op ALLE bestaande tafels (eenmalig)
+document.querySelectorAll('.tafel').forEach(btn => {
+    maakTafelDraggable(btn);
+    btn.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        if (!isDragging && confirm('Tafel verwijderen?')) {
+            btn.remove(fetch('TafelOpslaan.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        actie: 'verwijderen',
+        nummer: btn.textContent
+    })
+            }));
+            // Hier kun je evt. een AJAX-call doen om de wijziging op te slaan
+        }
+    });
+});
+
 
 fetch('bewerkFormulier.html')
   .then(response => response.text())
@@ -130,8 +243,41 @@ function bewerkReservering(id) {
 function sluitBewerkFormulier() {
     document.getElementById('bewerkFormulier').style.display = 'none';
 }
-window.sluitBewerkFormulier = sluitBewerkFormulier;
 
+window.addEventListener('DOMContentLoaded', function() {
+    fetch('TafelsOphalen.php')
+        .then(res => res.json())
+        .then(tafels => {
+            const plattegrond = document.querySelector('.plattegrond-container');
+            tafels.forEach(t => {
+                const btn = document.createElement('button');
+                btn.className = 'tafel';
+                btn.style.position = 'absolute';
+                btn.style.left = t.left_px + 'px';
+                btn.style.top = t.top_px + 'px';
+                btn.textContent = t.nummer;
+                btn.setAttribute('onclick', `openFormulier(${t.nummer})`);
+                plattegrond.appendChild(btn);
+                maakTafelDraggable(btn);
+                btn.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    if (confirm('Tafel verwijderen?')) {
+                        btn.remove();
+                        fetch('TafelOpslaan.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                actie: 'verwijderen',
+                                nummer: btn.textContent
+                            })
+                        });
+                    }
+                });
+            });
+        });
+});
+
+window.sluitBewerkFormulier = sluitBewerkFormulier;
 window.bewerkReservering = bewerkReservering;
 window.verwijderReservering = verwijderReservering;
 
