@@ -1,11 +1,14 @@
 <?php
-header('Content-Type: application/json; charset=UTF-8');
-$data = json_decode(file_get_contents('php://input'), true);
+session_start();
 $mysqli = new mysqli('localhost', 'root', '', 'PersoneelLogin');
 
-if (isset($data['menu_id'], $data['aantal'])) {
-    $stmt = $mysqli->prepare("INSERT INTO bestellingen (menu_id, aantal, besteld_op) VALUES (?, ?, NOW())");
-    $stmt->bind_param("ii", $data['menu_id'], $data['aantal']);
+$data = json_decode(file_get_contents('php://input'), true);
+$email = $_SESSION['klant_email'] ?? '';
+
+file_put_contents('debug.txt', $email . PHP_EOL, FILE_APPEND);
+if (isset($data['menu_id'], $data['aantal']) && $email) {
+    $stmt = $mysqli->prepare("INSERT INTO bestellingen (menu_id, aantal, besteld_op, klant_email) VALUES (?, ?, NOW(), ?)");
+    $stmt->bind_param("iis", $data['menu_id'], $data['aantal'], $email);
     $stmt->execute();
     echo json_encode(['success' => true]);
 } else {

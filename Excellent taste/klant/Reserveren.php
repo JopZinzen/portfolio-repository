@@ -20,6 +20,13 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
+session_start();
+if (!isset($_SESSION['klant_email'])) {
+    // Niet ingelogd, stuur terug naar de loginpagina
+    header('Location: LoginKlant.html');
+    exit;
+}
+
 
 $host = "localhost";
 $db = "PersoneelLogin";
