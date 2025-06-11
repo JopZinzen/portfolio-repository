@@ -10,7 +10,7 @@
 
 <div class="navigatie">
     <a href="HomeET.php"><button>Home</button></a>
-    <a href="MenukaartET.html"><button>Menukaart</button></a>
+    <a href="MenukaartET.php"><button>Menukaart</button></a>
     <a href="OveronsET.html"><button>Over ons</button></a>
 </div>
 
