@@ -23,17 +23,20 @@ fetch('../klant/BestelGeschiedenis.php')
   });
 
 window.herhaalBestelling = function(menu_id, aantal) {
+    const wachtwoord = prompt("Voer het dag-wachtwoord in om te bestellen:");
+    if (!wachtwoord) return;
+
     fetch('BestellingPlaatsen.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ menu_id: menu_id, aantal: aantal })
+        body: JSON.stringify({ menu_id: menu_id, aantal: aantal, wachtwoord: wachtwoord })
     })
     .then(res => res.json())
     .then(result => {
         if (result.success) {
             alert('Bestelling opnieuw geplaatst!');
         } else {
-            alert('Opnieuw bestellen mislukt!');
+            alert('Opnieuw bestellen mislukt! ' + (result.error || ''));
         }
     });
 };

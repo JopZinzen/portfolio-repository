@@ -1,4 +1,6 @@
 <?php
+$success = mail($to, $subject, $message, $headers);
+file_put_contents('herinnering_log.txt', "Mail naar: $to, onderwerp: $subject\n", FILE_APPEND);
 $mysqli = new mysqli('localhost', 'root', '', 'PersoneelLogin');
 
 // Zoek reserveringen van morgen
