@@ -10,7 +10,7 @@
 
 <div class="navigatie">
     <a href="HomeET.php"><button>Home</button></a>
-    <a href="MenukaartET.php"><button>Menukaart</button></a>
+    <a href="MenukaartET.html"><button>Menukaart</button></a>
     <a href="OveronsET.html"><button>Over ons</button></a>
 </div>
 
@@ -19,13 +19,6 @@
 <?php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-
-session_start();
-if (!isset($_SESSION['klant_email'])) {
-    // Niet ingelogd, stuur terug naar de loginpagina
-    header('Location: LoginKlant.html');
-    exit;
-}
 
 
 $host = "localhost";
@@ -47,11 +40,9 @@ $personen = $_POST['personen'] ?? '';
 $tafel = $_POST['tafel'] ?? '';
 
 if ($naam && $datum && $tijd && $personen && $tafel) {
-   $email = $_SESSION['klant_email'] ?? '';
-
-$sql = "INSERT INTO reserveringen (naam, datum, tijd, personen, tafel, email) VALUES (?, ?, ?, ?, ?, ?)";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("sssiss", $naam, $datum, $tijd, $personen, $tafel, $email);
+    $sql = "INSERT INTO reserveringen (naam, datum, tijd, personen, tafel) VALUES (?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssii", $naam, $datum, $tijd, $personen, $tafel);
 
     if ($stmt->execute()) {
         echo "<h2>✅ Reservering opgeslagen!</h2>";
