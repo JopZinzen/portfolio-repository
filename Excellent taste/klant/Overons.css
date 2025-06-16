@@ -1,0 +1,41 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: url('restaurant.png') no-repeat center center fixed;
+  background-size: cover;
+}
+
+.navigatie {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.navigatie a {
+  color: white;
+  margin-left: 20px;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.inhoud-container {
+  background-color: #f68c4f;
+  max-width: 800px;
+  margin: 100px auto;
+  padding: 40px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+p {
+  font-size: 20px;
+  line-height: 1.6;
+}

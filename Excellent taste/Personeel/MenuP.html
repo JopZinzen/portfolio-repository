@@ -21,12 +21,18 @@
         <input type="text" id="name" placeholder="Naam" required>
         <input type="text" id="description" placeholder="Beschrijving">
         <input type="text" id="price" placeholder="Prijs" required>
-        <button type="submit">Toevoegen</button>
+       
+
+        <select id="categorie" required>
+         <option value="voorgerecht">Voorgerecht</option>
+         <option value="hoofdgerecht">Hoofdgerecht</option>
+         <option value="dessert">Dessert</option>
+         <option value="koudedrank">Koude dranken</option>
+         <option value="warmedrank">Warme dranken</option>
+        </select>
+     <button type="submit">Toevoegen</button>
     </form>
-    <select class="edit-categorie">
-     <option value="eten">Eten</option>
-     <option value="drinken">Drinken</option>
-    </select>
+    
     <script src="MenuP.js"></script>
        
 </body>

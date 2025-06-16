@@ -6,7 +6,7 @@ $result = $mysqli->query(
     "SELECT b.id, b.menu_id, b.aantal, b.besteld_op, b.tafel, m.naam, m.beschrijving, m.prijs, m.categorie
      FROM bestellingen b
      JOIN menu_items m ON b.menu_id = m.id
-     WHERE m.categorie = 'drinken'
+     WHERE m.categorie IN ('warmedrank', 'koudedrank')
      ORDER BY b.besteld_op DESC"
 );
 $bestellingen = [];

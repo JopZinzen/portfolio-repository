@@ -13,7 +13,7 @@ $result = $stmt->get_result();
 if ($row = $result->fetch_assoc()) {
     if (password_verify($wachtwoord, $row['wachtwoord'])) {
         $_SESSION['klant_email'] = $email;
-        header('Location: ReserverenET.html'); // of waar je naartoe wilt
+        header('Location: Reserveren.php'); // of waar je naartoe wilt
         exit;
     }
 }

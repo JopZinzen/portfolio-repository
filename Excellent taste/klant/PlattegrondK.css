@@ -3,40 +3,82 @@ body {
     
   }
   
-  .plattegrond-container {
-  position: relative;
-  width: 1250px;           
-  height: 650px;          
-  background-color: #f68c4f;  
-  margin: 0 auto;        
-  border: 2px solid #000; 
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('achtergrond.jpg'); /* optioneel, voor sfeer */
+    background-size: cover;
+    background-position: center;
 }
-  
-  
-  
- .tafel {
-  position: absolute;
-  width: 44px;          
-  height: 50px;          
-  background-color: rgb(104, 6, 6);
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: 50%;     
-  cursor: pointer;
-  transform: translate(-50%, -50%); 
+
+.plattegrond-container {
+    position: relative;
+    width: 1000px;
+    height: 600px;
+    margin: 80px auto 40px;
+    background-color: #f68c4f; /* oranje */
+    border: 2px solid #000;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+.tafel {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background-color: #3b1f14; /* donkerbruin */
+    color: white;
+    font-weight: bold;
+    font-size: 1em;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+    transition: background-color 0.3s;
+}
+
+.tafel:hover {
+    background-color: #552b1e;
 }
   
   .tafel:hover {
     background-color: rgb(131, 8, 8);
   }
   
-  #reserveringsformulier {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 2px solid #ccc;
+#reserveringsformulier {
     display: none;
-  }
+    flex-direction: column;
+    background: #fffacd;
+    border: 2px solid #aa0000;
+    border-radius: 10px;
+    z-index: 1000;
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 350px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.4);
+}
+#reserveringsformulier input,
+#reserveringsformulier button {
+    margin-top: 8px;
+    padding: 8px;
+    font-size: 1em;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+#reserveringsformulier button {
+    background-color: #3b1f14;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+#reserveringsformulier button:hover {
+    background-color: #552b1e;
+}
 
 .navigatie {
   margin-bottom: 15px;

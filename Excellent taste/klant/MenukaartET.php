@@ -7,40 +7,50 @@ if (!isset($_SESSION['klant_email'])) {
 ?>
 
 
-<!doctype html>
-
+<!DOCTYPE html>
+<html lang="nl">
 <head>
-    <title>Menu</title>
-    <a href="HomeET.html"> <button> Home </button> </a>
-    <a href="ReserverenET.html"> <button>Reserveren</button> </a> 
-    <a href="OveronsET.html"> <button> Over ons </button> </a>
     <meta charset="UTF-8">
+    <title>Menu - Excellent Taste</title>
+    <link rel="stylesheet" href="Klant.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-
 <body>
-    <h2>Menu</h2>
-    <table id="menuTable">
-        <thead>
-            <tr><th>Naam</th><th>Beschrijving</th><th>Prijs</th></tr>
-        </thead>
-        <tbody></tbody>
-        <a href="BestelGeschiedenis.html">
-    <button>Mijn Bestelgeschiedenis</button>
-</a>
-    </table>
-    <script src="MenuKlant.js"></script>
+
+<div class="background">
+    <div class="navigatie">
+        <a href="HomeET.html">Home</a>
+        <a href="Reserveren.php">Reserveren</a>
+        <a href="OveronsET.html">Over ons</a>
+        <a href="BestelGeschiedenis.html">Bestelgeschiedenis</a>
+    </div>
+
+    <div class="menu-container">
+        <div class="tabs">
+            <button class="tab active" onclick="toonCategorie('voorgerecht')">Voorgerecht</button>
+            <button class="tab" onclick="toonCategorie('hoofdgerecht')">Hoofdgerecht</button>
+            <button class="tab" onclick="toonCategorie('dessert')">Dessert</button>
+            <button class="tab" onclick="toonCategorie('koudedrank')">Koude dranken</button>
+            <button class="tab" onclick="toonCategorie('warmedrank')">Warme dranken</button>
+        </div>
+
+        <div id="menuItems" class="menu-grid"></div>
+    </div>
+</div>
+
+<script src="MenuKlant.js"></script>
 </body>
-
-
-
-
-
-
-
-
-
-
-
-
-
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
