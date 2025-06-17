@@ -2,31 +2,36 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Mijn Bestellingen</title>
-      <div class="navigatie">
-        <a href="HomeET.html"> <button> Home </button></a>
-        <a href="MenukaartET.php"> <button> Menukaart </button> </a>
-        <a href="Reserveren.php"> <button> Reserveren </button> </a>
-        <a href="OveronsET.html"> <button> Over ons </button> </a>
-    </div>
+    <title>Mijn Bestellingen</title>    
     <link rel="stylesheet" href="Klant.css">
 </head>
 
 <body>
-    <h2>Mijn Bestelgeschiedenis</h2>
-    <table>
-        <thead>
-            <tr>
+    <div class="background">
+        <div class="navigatie">
+         <a href="HomeET.html"> <button> Home </button></a>
+         <a href="MenukaartET.php"> <button> Menukaart </button> </a>
+         <a href="Reserveren.php"> <button> Reserveren </button> </a>
+         <a href="OveronsET.html"> <button> Over ons </button> </a>
+        </div>
+
+     <div class="hero-text">
+        <h2>Mijn Bestelgeschiedenis</h2>
+      <table>
+         <thead>
+             <tr>
                 <th>Menu-item</th>
                 <th>Beschrijving</th>
                 <th>Prijs</th>
                 <th>Aantal</th>
                 <th>Besteld op</th>
                 <th>Opnieuw bestellen</th>
-            </tr>
-        </thead>
+             </tr>
+         </thead>
         <tbody id="bestelTbody"></tbody>
-    </table>
+      </table>
+     </div>
+    </div>
    <script src="BestelGeschiedenis.js"></script>
 </body>
 </html>
