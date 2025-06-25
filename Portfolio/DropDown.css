@@ -1,0 +1,42 @@
+.dropdown-container {
+  margin: 20px 0;
+}
+
+.dropdown-button {
+  width: 100%; /* maakt de knop breed */
+  padding: 15px 20px;
+  font-size: 18px;
+  text-align: left;
+  background-color: #f0f0f0;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dropdown-content {
+  display: none;
+  margin-top: 10px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.dropdown-content img {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.arrow {
+  transition: transform 0.3s ease;
+}
+
+.dropdown-button.active .arrow {
+  transform: rotate(90deg); /* omhoog wijzend */
+}
