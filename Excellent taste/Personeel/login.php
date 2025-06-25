@@ -22,15 +22,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result && $result->num_rows == 1) {
         $row = $result->fetch_assoc();
-        // If you store hashed passwords, use password_verify()
-        if (password_verify($password, $row['password'])) {
-            // Login success
-            echo "Login successful!";
-            // Redirect or start session here
-            // session_start();
-            // $_SESSION['username'] = $username;
-            // header("Location: dashboard.php");
-            // exit();
+        if (password_verify($password, $row['password'])) {           
+            header("Location: reserveringen.html");           
+            exit();
         } else {
             echo "Invalid username or password.";
         }
