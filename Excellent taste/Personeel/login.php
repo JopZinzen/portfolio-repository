@@ -27,19 +27,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result && $result->num_rows === 1) {
         $row = $result->fetch_assoc();
 
-        // Controleer wachtwoord (hashed)
-        if (password_verify($password, $row['password'])) {
+         
+       if ($password === $row['password']) {
             session_start();
             $_SESSION['username'] = $username;
-
-            // Stuur 'success' terug aan JavaScript
-            echo "success";
-        } else {
-            echo "Invalid username or password.";
+             echo "success";
+         } else {
+             echo "Invalid username or password.";
+         }
         }
-    } else {
-        echo "Invalid username or password.";
-    }
 }
 
 // Verbreek de verbinding
