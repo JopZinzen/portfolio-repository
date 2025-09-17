@@ -13,38 +13,61 @@ $mysqli = new mysqli('localhost', 'root', '', 'PersoneelLogin');
 if ($mysqli->connect_error) {
     die("Verbinding mislukt: " . $mysqli->connect_error);
 }
+$mysqli->set_charset('utf8mb4');
 
-$tafels = [];
-
-// Verwerking reservering
 $success = false;
 $error = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $naam = $_POST['naam'] ?? '';
-    $datum = $_POST['datum'] ?? '';
-    $tijd = $_POST['tijd'] ?? '';
-    $personen = $_POST['personen'] ?? '';
-    $tafel = $_POST['tafel'] ?? '';
-    $email = $_SESSION['klant_email'] ?? '';
 
-    if ($naam && $datum && $tijd && $personen && $tafel) {
-        $stmt = $mysqli->prepare("INSERT INTO reserveringen (naam, datum, tijd, personen, tafel, email) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssiss", $naam, $datum, $tijd, $personen, $tafel, $email);
-        if ($stmt->execute()) {
-            $success = true;
-        } else {
-            $error = "❌ Fout bij opslaan: " . $stmt->error;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Input ophalen
+    $naam      = trim($_POST['naam'] ?? '');
+    $datum     = $_POST['datum'] ?? '';      // verwacht YYYY-MM-DD
+    $tijd      = $_POST['tijd'] ?? '';       // verwacht HH:MM
+    $personen  = (int)($_POST['personen'] ?? 0);
+    $tafel     = trim($_POST['tafel'] ?? '');
+    // LET OP: kolom heet bewust 'klant_emial' in jouw DB
+    $klant_emial = $_SESSION['klant_email'] ?? '';
+
+    // Basisvalidatie
+    if ($naam && $datum && $tijd && $personen > 0 && $tafel && $klant_emial) {
+        // Zorg dat tijd 'HH:MM:SS' wordt
+        if (preg_match('/^\d{2}:\d{2}$/', $tijd)) {
+            $tijd .= ':00';
         }
-        $stmt->close();
+
+        // 1) Check op dubbele reservering: zelfde datum+tijd+tafel niet twee keer
+        $chk = $mysqli->prepare("
+            SELECT id FROM reserveringen
+            WHERE datum = ? AND tijd = ? AND tafel = ? 
+            LIMIT 1
+        ");
+        $chk->bind_param('sss', $datum, $tijd, $tafel);
+        $chk->execute();
+        $dup = $chk->get_result()->fetch_assoc();
+        $chk->close();
+
+        if ($dup) {
+            $error = "❌ Deze tafel is al gereserveerd op $datum om $tijd.";
+        } else {
+            // 2) Insert reservering (let op kolomnaam klant_emial)
+            $stmt = $mysqli->prepare("
+                INSERT INTO reserveringen
+                (naam, datum, tijd, personen, tafel, klant_email)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ");
+            // types: s s s i s s
+            $stmt->bind_param("sssiss", $naam, $datum, $tijd, $personen, $tafel, $klant_emial);
+
+            if ($stmt->execute()) {
+                $success = true;
+            } else {
+                $error = "❌ Fout bij opslaan: " . $stmt->error;
+            }
+            $stmt->close();
+        }
     } else {
         $error = "❌ Niet alle gegevens zijn ingevuld.";
     }
-}
-
-// Tafels ophalen
-$result = $mysqli->query("SELECT id, nummer, left_px, top_px FROM tafels");
-while ($row = $result->fetch_assoc()) {
-    $tafels[] = $row;
 }
 ?>
 <!DOCTYPE html>
@@ -54,30 +77,12 @@ while ($row = $result->fetch_assoc()) {
     <title>Reserveren</title>
     <link rel="stylesheet" href="Klant.css">
     <style>
-      
+      .plattegrond-container { position: relative; width: 900px; height: 600px; margin: 20px auto; border: 1px solid #ccc; }
+      .tafel { position: absolute; padding: 8px 10px; cursor: pointer; }
+      #reserveringsformulier { display: none; flex-direction: column; gap: 10px; width: 320px; margin: 20px auto; }
+      label { display: block; margin-top: 6px; }
     </style>
 </head>
-<script>
-window.addEventListener('DOMContentLoaded', function () {
-    fetch('../Personeel/TafelsOphalen.php') // pad aanpassen indien nodig
-        .then(res => res.json())
-        .then(tafels => {
-            const container = document.querySelector('.plattegrond-container');
-            tafels.forEach(t => {
-                const btn = document.createElement('button');
-                btn.className = 'tafel';
-                btn.textContent = t.nummer;
-                btn.style.left = t.left_px + 'px';
-                btn.style.top = t.top_px + 'px';
-                btn.onclick = function () {
-                    openFormulier(t.nummer);
-                };
-                container.appendChild(btn);
-            });
-        })
-        .catch(err => console.error('Tafels ophalen mislukt:', err));
-});
-</script>
 <body>
 
 <div class="navigatie">
@@ -104,22 +109,41 @@ window.addEventListener('DOMContentLoaded', function () {
     </form>
 </div>
 
-<div class="bevestiging">
+<div class="bevestiging" style="text-align:center;">
     <?php if ($success): ?>
         <h2>✅ Reservering opgeslagen!</h2>
         <p>Bedankt voor je reservering.</p>
     <?php elseif ($error): ?>
-        <p style="color: red;"><?= $error ?></p>
+        <p style="color: red;"><?= htmlspecialchars($error) ?></p>
     <?php endif; ?>
 </div>
 
 <script>
+// Tafels renderen vanaf personeel-endpoint (met left_px/top_px)
+window.addEventListener('DOMContentLoaded', function () {
+    fetch('../Personeel/TafelsOphalen.php') // pad aanpassen indien nodig
+        .then(res => res.json())
+        .then(tafels => {
+            const container = document.querySelector('.plattegrond-container');
+            tafels.forEach(t => {
+                const btn = document.createElement('button');
+                btn.className = 'tafel';
+                btn.textContent = t.nummer;
+                btn.style.left = (t.left_px || 0) + 'px';
+                btn.style.top  = (t.top_px  || 0) + 'px';
+                btn.onclick = function () { openFormulier(t.nummer); };
+                container.appendChild(btn);
+            });
+        })
+        .catch(err => console.error('Tafels ophalen mislukt:', err));
+});
+
 function openFormulier(tafelNummer) {
     document.getElementById('tafelnummer-form').textContent = tafelNummer;
     document.getElementById('reserveringsformulier').style.display = 'flex';
     document.getElementById("tafel").value = tafelNummer;
-    btn.onclick = () => alert('Tafel ' + t.nummer + ' aangeklikt!');
 }
+
 function checktafel() {
     var tafel = document.getElementById("tafel").value;
     if (!tafel) {
@@ -129,6 +153,5 @@ function checktafel() {
     return true;
 }
 </script>
-<script src="Plattegrond.js"></script>
 </body>
 </html>

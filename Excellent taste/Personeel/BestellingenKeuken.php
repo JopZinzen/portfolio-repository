@@ -1,19 +1,33 @@
 <?php
 header('Content-Type: application/json; charset=UTF-8');
-$mysqli = new mysqli('localhost', 'root', '', 'PersoneelLogin');
+header('Cache-Control: no-store');
 
-$result = $mysqli->query(
-    "SELECT b.id, b.menu_id, b.aantal, b.besteld_op, b.tafel, m.naam, m.beschrijving, m.prijs, m.categorie
-     FROM bestellingen b
-     JOIN menu_items m ON b.menu_id = m.id
-     WHERE m.categorie IN ('voorgerecht', 'hoofdgerecht', 'dessert')
-     ORDER BY b.besteld_op DESC"
-);
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+$mysqli = new mysqli('localhost','root','','PersoneelLogin');
+$mysqli->set_charset('utf8mb4');
 
-$bestellingen = [];
-while ($row = $result->fetch_assoc()) {
-    $bestellingen[] = $row;
+$sql = "
+SELECT 
+  b.menu_id,
+  b.aantal,
+  b.besteld_op,          -- << JOUW kolomnaam
+  b.tafel,
+  m.naam,
+  m.beschrijving,
+  m.prijs,
+  m.categorie
+FROM bestellingen AS b
+JOIN menu_items  AS m ON b.menu_id = m.id
+WHERE m.categorie IN ('voorgerecht','hoofdgerecht','dessert')
+ORDER BY b.besteld_op DESC
+";
+
+$res  = $mysqli->query($sql);
+$rows = $res->fetch_all(MYSQLI_ASSOC);
+
+foreach ($rows as &$r) {
+  $r['aantal'] = (int)$r['aantal'];
+  if (isset($r['prijs'])) $r['prijs'] = (float)$r['prijs'];
 }
 
-echo json_encode($bestellingen);
-?>
+echo json_encode($rows);
