@@ -5,11 +5,11 @@ header('Content-Type: application/json');
 
 $mysqli = new mysqli('localhost', 'root', '', 'PersoneelLogin');
 
-// ✅ Lees en decode JSON input
+
 $raw = file_get_contents('php://input');
 $data = json_decode($raw, true);
 
-// ✅ Controleer of json_decode is gelukt
+
 if (!is_array($data)) {
     echo json_encode(['success' => false, 'error' => 'Ongeldige JSON ontvangen', 'debug_raw' => $raw]);
     exit;

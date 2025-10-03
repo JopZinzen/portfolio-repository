@@ -75,49 +75,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Reserveren</title>
-    <link rel="stylesheet" href="Klant.css">
-    <style>
-      .plattegrond-container { position: relative; width: 900px; height: 600px; margin: 20px auto; border: 1px solid #ccc; }
-      .tafel { position: absolute; padding: 8px 10px; cursor: pointer; }
-      #reserveringsformulier { display: none; flex-direction: column; gap: 10px; width: 320px; margin: 20px auto; }
-      label { display: block; margin-top: 6px; }
-    </style>
+    <link rel="stylesheet" href="Klant.css">    
 </head>
 <body>
+<div class="background">
+    <div class="navigatie">
+        <a href="HomeET.html"><button>Home</button></a>
+        <a href="MenukaartET.php"><button>Menukaart</button></a>
+        <a href="OveronsET.html"><button>Over ons</button></a>
+    </div>
 
-<div class="navigatie">
-    <a href="HomeET.php"><button>Home</button></a>
-    <a href="MenukaartET.php"><button>Menukaart</button></a>
-    <a href="OveronsET.html"><button>Over ons</button></a>
+    <div class="plattegrond-container"></div>
+
+    <div id="reserveringsformulier">
+        <h2>Reservering voor tafel <span id="tafelnummer-form"></span></h2>
+        <form method="post" onsubmit="return checktafel()">
+            <input type="hidden" id="tafel" name="tafel">
+            <label>Naam:</label>
+            <input type="text" name="naam" required>
+            <label>Datum:</label>
+            <input type="date" name="datum" required>
+            <label>Tijd:</label>
+            <input type="time" name="tijd" required>
+            <label>Aantal personen:</label>
+            <input type="number" name="personen" min="1" max="10" required>
+            <button type="submit">Reserveer</button>
+        </form>
+    </div>
+
+    <div class="bevestiging" style="text-align:center;">
+        <?php if ($success): ?>
+            <h2>✅ Reservering opgeslagen!</h2>
+            <p>Bedankt voor je reservering.</p>
+        <?php elseif ($error): ?>
+            <p style="color: red;"><?= htmlspecialchars($error) ?></p>
+        <?php endif; ?>
+    </div>
 </div>
-
-<div class="plattegrond-container"></div>
-
-<div id="reserveringsformulier">
-    <h2>Reservering voor tafel <span id="tafelnummer-form"></span></h2>
-    <form method="post" onsubmit="return checktafel()">
-        <input type="hidden" id="tafel" name="tafel">
-        <label>Naam:</label>
-        <input type="text" name="naam" required>
-        <label>Datum:</label>
-        <input type="date" name="datum" required>
-        <label>Tijd:</label>
-        <input type="time" name="tijd" required>
-        <label>Aantal personen:</label>
-        <input type="number" name="personen" min="1" max="10" required>
-        <button type="submit">Reserveer</button>
-    </form>
-</div>
-
-<div class="bevestiging" style="text-align:center;">
-    <?php if ($success): ?>
-        <h2>✅ Reservering opgeslagen!</h2>
-        <p>Bedankt voor je reservering.</p>
-    <?php elseif ($error): ?>
-        <p style="color: red;"><?= htmlspecialchars($error) ?></p>
-    <?php endif; ?>
-</div>
-
 <script>
 // Tafels renderen vanaf personeel-endpoint (met left_px/top_px)
 window.addEventListener('DOMContentLoaded', function () {

@@ -29,29 +29,38 @@
         <button class="tafel tien" style="top: 580px; left: 330px;" onclick="openFormulier(10)">10</button>
         <button class="tafel elf" style="top: 138px; left: 1200px;" onclick="openFormulier(11)"></button>
         <button class="tafel elf twee" style="top: 30px; left: 1090px;" onclick="openFormulier(11)">11</button>
-        
-    </div>
+    </div>    
+ <!-- Overlay (klik hierop sluit het formulier) -->
+ <div class="form-overlay" id="formOverlay" style="display:none"></div>
+ 
+<div id="reserveringsformulier"> 
+  <div class="form-header"> ... <button class="form-close" id="formCloseBtn">×</button> </div>
+ <!-- Formulier -->
+ <div id="reserveringsformulier" role="dialog" aria-modal="true" aria-labelledby="formTitle" tabindex="-1" style="display:none">
+  <div class="form-header">
+    <h2 id="formTitle">Reservering voor tafel <span id="tafelnummer"></span></h2>
+    <button type="button" class="form-close" id="formCloseBtn" aria-label="Sluiten">×</button>
 
-     <div id="reserveringsformulier" style="display:none; margin-top: 20px;">
-        <h2>Reservering voor tafel <span id="tafelnummer"></span></h2>
-        <form action="Reserveren.php" method="post" id="reserveringForm" onsubmit="return checktafel()">
-            <input type="hidden" id="tafel" name="tafel">
-            
-            <label for="naam">Naam:</label><br>
-            <input type="text" id="naam" name="naam" required><br><br>
 
-            <label for="datum">Datum:</label><br>
-            <input type="date" id="datum" name="datum" required><br><br>
+  <form action="Reserveren.php" method="post" id="reserveringForm" onsubmit="return checktafel()">
+    <input type="hidden" id="tafel" name="tafel">
 
-            <label for="tijd">Tijd:</label><br>
-            <input type="time" id="tijd" name="tijd" required><br><br>
+    <label for="naam">Naam:</label>
+    <input type="text" id="naam" name="naam" required>
 
-            <label for="personen">Aantal personen:</label><br>
-            <input type="number" id="personen" name="personen" min="1" max="10" required><br><br>
+    <label for="datum">Datum:</label>
+    <input type="date" id="datum" name="datum" required>
 
-            <button type="submit">Reserveer</button>
-        </form>
-    </div>
+    <label for="tijd">Tijd:</label>
+    <input type="time" id="tijd" name="tijd" required>
+
+    <label for="personen">Aantal personen:</label>
+    <input type="number" id="personen" name="personen" min="1" max="10" required>
+
+    <button type="submit" class="btn">Reserveer</button>
+  </form>
+ </div>
+
     
     <script src="Plattegrond.js"></script>
 

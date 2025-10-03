@@ -41,6 +41,14 @@ echo "</ul>";
 $conn->close();
 ?>
 
+<Doctype html>
+
+<head>
+    <link rel="stylesheet" href="NoShow.css">
+    <meta charset="UTF-8">
+    <title>No-Show</title>
+</head>
+
 <a href="reserveringen.html">
     <button type="button">Terug naar Reserveringen</button>
 </a>

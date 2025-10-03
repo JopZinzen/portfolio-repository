@@ -59,64 +59,102 @@ function tafelToevoegen() {
 
 // Maak een tafel versleepbaar
 function maakTafelDraggable(btn) {
-    btn.onmousedown = function (e) {
-        if (e.button !== 0) return;
-        let startX = e.clientX;
-        let startY = e.clientY;
-        let verplaatst = false;
+  const container = document.querySelector('.plattegrond-container');
 
-        function onMouseMove(e) {
-            const dx = Math.abs(e.clientX - startX);
-            const dy = Math.abs(e.clientY - startY);
-            if (dx > 3 || dy > 3) {
-                verplaatst = true;
-                beginSlepen(e);
-                document.removeEventListener('mousemove', onMouseMove);
-            }
-        }
+  let startX = 0, startY = 0;
+  let shiftX = 0, shiftY = 0;
+  let moved = false;
 
-        function beginSlepen(e) {
-            const rect = btn.getBoundingClientRect();
-const shiftX = e.clientX - rect.left;
-const shiftY = e.clientY - rect.top;
+  function onMouseDown(e) {
+    if (e.button !== 0) return;
 
-            function moveAt(x, y) {
-                btn.style.left = x - shiftX + 'px';
-                btn.style.top = y - shiftY + 'px';
-            }
+    moved = false;
+    startX = e.clientX;
+    startY = e.clientY;
 
-            function onMouseMoveDrag(e) {
-                moveAt(e.pageX, e.pageY);
-            }
+    // detecteer of het een “drag” wordt
+    document.addEventListener('mousemove', detectMove);
+    // voor click zonder slepen
+    document.addEventListener('mouseup', onMouseUpNoDrag, { once: true });
 
-            document.addEventListener('mousemove', onMouseMoveDrag);
+    e.preventDefault();
+  }
 
-            document.onmouseup = function () {
-                document.removeEventListener('mousemove', onMouseMoveDrag);
-                document.onmouseup = null;
+  function detectMove(e) {
+    const dx = Math.abs(e.clientX - startX);
+    const dy = Math.abs(e.clientY - startY);
+    if (dx > 3 || dy > 3) {
+      moved = true;
+      document.removeEventListener('mousemove', detectMove);
+      startDrag(e);
+    }
+  }
 
-                // Positie opslaan
-                fetch('TafelOpslaan.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        actie: 'verplaatsen',
-                        nummer: btn.textContent,
-                        left: parseInt(btn.style.left),
-                        top: parseInt(btn.style.top)
-                    })
-                });
-            };
-        }
+  function startDrag(e) {
+    const rect = btn.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
 
-        document.addEventListener('mousemove', onMouseMove);
+    shiftX = e.clientX - rect.left;
+    shiftY = e.clientY - rect.top;
 
-        document.onmouseup = function () {
-            document.removeEventListener('mousemove', onMouseMove);
-            document.onmouseup = null;
-            if (!verplaatst) openFormulier(btn.textContent);
-        };
-    };
+    // tijdens drag verplaatsen
+    function onMouseMoveDrag(ev) {
+      let x = ev.clientX - containerRect.left - shiftX;
+      let y = ev.clientY - containerRect.top  - shiftY;
+
+      // binnen container houden (optioneel)
+      x = Math.max(0, Math.min(x, container.clientWidth  - btn.offsetWidth));
+      y = Math.max(0, Math.min(y, container.clientHeight - btn.offsetHeight));
+
+      btn.style.left = x + 'px';
+      btn.style.top  = y + 'px';
+    }
+
+    // einde drag: opslaan
+    function onMouseUpDrag() {
+      document.removeEventListener('mousemove', onMouseMoveDrag);
+
+      fetch('TafelOpslaan.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          actie: 'verplaatsen',
+          nummer: btn.textContent,
+          left: Math.round(parseFloat(btn.style.left) || 0),
+          top:  Math.round(parseFloat(btn.style.top)  || 0)
+        })
+      }).catch(console.error);
+    }
+
+    document.addEventListener('mousemove', onMouseMoveDrag);
+    document.addEventListener('mouseup', onMouseUpDrag, { once: true });
+  }
+
+  // muisklik loslaten zonder slepen ⇒ open formulier
+  function onMouseUpNoDrag() {
+    document.removeEventListener('mousemove', detectMove);
+    if (!moved) openFormulier(btn.textContent);
+  }
+
+  btn.addEventListener('mousedown', onMouseDown);
+
+  // rechterklik = verwijderen blijft ongewijzigd
+  btn.addEventListener('contextmenu', function (e) {
+    e.preventDefault();
+    if (confirm('Tafel verwijderen?')) {
+      btn.remove();
+      fetch('TafelOpslaan.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ actie: 'verwijderen', nummer: btn.textContent })
+      });
+    }
+  });
+}
+
+
+
+
 
     // Rechterklik = tafel verwijderen
     btn.addEventListener('contextmenu', function (e) {
@@ -133,7 +171,7 @@ const shiftY = e.clientY - rect.top;
             });
         }
     });
-}
+
 
 // Initialiseer bewerkformulier bij laden
 fetch('bewerkFormulier.html')
