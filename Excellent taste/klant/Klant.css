@@ -220,15 +220,15 @@ body {
   padding: 24px;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0,0,0,.35);
-  border: 2px solid #aa0000;       /* jouw rode rand – kan zachter, zie thema hieronder */
+  border: 2px solid #100101;       /* jouw rode rand – kan zachter, zie thema hieronder */
   
   /* THEMA */
-  background: #763e26;;             /* warme lichte ‘vanille’ binnenkant */
+  background: #854b32;;             /* warme lichte ‘vanille’ binnenkant */
 }
 
 /* Titelbalk boven het formulier */
 #reserveringsformulier .form-header {
-  background: #3b1f14;     /* donkerbruin */
+  background: #a85331;     /* donkerbruin */
   color: #fff;
   margin: -24px -24px 16px; /* trekt header over de randen heen */
   padding: 14px 20px;
@@ -292,7 +292,7 @@ body {
 }
 
 /* optioneel: mildere rand i.p.v. fel rood */
-#reserveringsformulier { border-color: #3b1f14;; }
+#reserveringsformulier { border-color: #7d422b;; }
 
 
 /* optionele overlay die NIET over de navbar valt */

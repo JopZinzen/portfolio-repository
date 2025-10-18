@@ -6,7 +6,7 @@ if (!$id) {
     exit;
 }
 $host = "localhost";
-$db = "PersoneelLogin";
+$db = "personeellogin";
 $user = "root";
 $pass = "";
 $conn = new mysqli($host, $user, $pass, $db);

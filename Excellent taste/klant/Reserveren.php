@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Reserveren</title>
-    <link rel="stylesheet" href="Klant.css">    
+    <link rel="stylesheet" href="/ET/personeel/PlattegrondP.css">    
 </head>
 <body>
 <div class="background">

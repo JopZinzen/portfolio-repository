@@ -46,9 +46,10 @@ body {
 /* Plattegrond netjes onder de navbar en gecentreerd */
 .plattegrond-container {
   position: relative;
+  background-image: url('/ET/klant/Plattegrond.jpg');
+  background-size: 95%;
   width: 1250px;
   height: 650px;
-  background-color: #f68c4f;
   margin: 24px auto 40px;     /* ipv 0 auto; zodat hij niet tegen de navbar plakt */
   border: 2px solid #000;
   border-radius: 12px;

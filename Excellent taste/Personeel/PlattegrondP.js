@@ -1,274 +1,565 @@
+function safeJson(text) {
+  try { return JSON.parse(text); } catch { return { ok:false, error:text }; }
+}
+function logReq(label, info) {
+  console.info(`[${label}]`, info);
+}
+
 let huidigeReserveringen = [];
-let isDragging = false;
+const IS_BEHEER = true;
 
-// Formulier openen
-function openFormulier(tafelNummer) {
-    document.getElementById('tafelnummer').textContent = "Tafel " + tafelNummer;
-    document.getElementById('reserveringsformulier').style.display = 'block';
-    document.getElementById("tafel").value = tafelNummer;
+document.addEventListener('DOMContentLoaded', () => {
+  initPlattegrond();
+});
 
-    fetch(`TafelReserveringen.php?table=${tafelNummer}`)
-        .then(response => response.json())
-        .then(data => {
-            huidigeReserveringen = data;
-            data.sort((a, b) => new Date(`${a.datum}T${a.tijd}`) - new Date(`${b.datum}T${b.tijd}`));
-
-            let overzicht = document.getElementById('reserveringenOverzicht');
-            if (data.length === 0) {
-                overzicht.innerHTML = `<h3>Reserveringen voor tafel ${tafelNummer}</h3><p>Geen reserveringen gevonden.</p>`;
-            } else {
-                let html = `<h3>Reserveringen voor tafel ${tafelNummer}</h3><ul>`;
-                data.forEach((res) => {
-                    html += `<li>
-                        ${res.datum} ${res.tijd} - ${res.naam} (${res.personen} personen)
-                        <button onclick="bewerkReservering(${res.id})">Bewerk</button>
-                        <button onclick="verwijderReservering(${res.id}, ${tafelNummer})">Verwijder</button>
-                        <button onclick="noShowReservering(${res.id}, ${tafelNummer})">No Show</button>
-                    </li>`;
-                });
-                html += `</ul>`;
-                overzicht.innerHTML = html;
-            }
-        });
-}
-
-// Tafel toevoegen
-function tafelToevoegen() {
-    const plattegrond = document.querySelector('.plattegrond-container');
-    const nieuwNummer = document.querySelectorAll('.tafel').length + 1;
-    const btn = document.createElement('button');
-    btn.className = 'tafel';
-    btn.textContent = nieuwNummer;
-    btn.style.left = '100px';
-    btn.style.top = '100px';
-    plattegrond.appendChild(btn);
-
-    maakTafelDraggable(btn);
-
-    fetch('TafelOpslaan.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            actie: 'toevoegen',
-            nummer: nieuwNummer,
-            left: 100,
-            top: 100
-        })
-    });
-}
-
-// Maak een tafel versleepbaar
-function maakTafelDraggable(btn) {
+/** ================== INIT ================== */
+function initPlattegrond() {
   const container = document.querySelector('.plattegrond-container');
+  if (!container) return;
 
-  let startX = 0, startY = 0;
-  let shiftX = 0, shiftY = 0;
-  let moved = false;
+  // 1) Tafels laden/renderen
+  laadTafels();
 
-  function onMouseDown(e) {
-    if (e.button !== 0) return;
+  // 2) Linkerklik = formulier openen (event delegation)
+  container.addEventListener('click', (e) => {
+    const btn = e.target.closest('.tafel');
+    if (!btn) return;
+    const tafelId = btn.dataset.id || btn.dataset.nummer || btn.textContent.trim();
+    openReserveringsFormulier(tafelId);
+  });
 
-    moved = false;
-    startX = e.clientX;
-    startY = e.clientY;
-
-    // detecteer of het een “drag” wordt
-    document.addEventListener('mousemove', detectMove);
-    // voor click zonder slepen
-    document.addEventListener('mouseup', onMouseUpNoDrag, { once: true });
-
+  // 3) Rechterklik = verwijderen
+  container.addEventListener('contextmenu', async (e) => {
+    const btn = e.target.closest('.tafel');
+    if (!btn) return;
     e.preventDefault();
-  }
 
-  function detectMove(e) {
-    const dx = Math.abs(e.clientX - startX);
-    const dy = Math.abs(e.clientY - startY);
-    if (dx > 3 || dy > 3) {
-      moved = true;
-      document.removeEventListener('mousemove', detectMove);
-      startDrag(e);
-    }
-  }
+    const nummer = btn.dataset.nummer || btn.textContent.trim();
+    const id = btn.dataset.id || null;
+    if (!confirm(`Tafel ${nummer} verwijderen?`)) return;
 
-  function startDrag(e) {
-    const rect = btn.getBoundingClientRect();
-    const containerRect = container.getBoundingClientRect();
+    try {
+      const fd = new FormData();
+      fd.append('action', 'delete');
+      if (id) fd.append('id', id);
+      fd.append('nummer', nummer);
 
-    shiftX = e.clientX - rect.left;
-    shiftY = e.clientY - rect.top;
-
-    // tijdens drag verplaatsen
-    function onMouseMoveDrag(ev) {
-      let x = ev.clientX - containerRect.left - shiftX;
-      let y = ev.clientY - containerRect.top  - shiftY;
-
-      // binnen container houden (optioneel)
-      x = Math.max(0, Math.min(x, container.clientWidth  - btn.offsetWidth));
-      y = Math.max(0, Math.min(y, container.clientHeight - btn.offsetHeight));
-
-      btn.style.left = x + 'px';
-      btn.style.top  = y + 'px';
-    }
-
-    // einde drag: opslaan
-    function onMouseUpDrag() {
-      document.removeEventListener('mousemove', onMouseMoveDrag);
-
-      fetch('TafelOpslaan.php', {
+      const resp = await fetch('TafelsBijwerken.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          actie: 'verplaatsen',
-          nummer: btn.textContent,
-          left: Math.round(parseFloat(btn.style.left) || 0),
-          top:  Math.round(parseFloat(btn.style.top)  || 0)
-        })
-      }).catch(console.error);
-    }
-
-    document.addEventListener('mousemove', onMouseMoveDrag);
-    document.addEventListener('mouseup', onMouseUpDrag, { once: true });
-  }
-
-  // muisklik loslaten zonder slepen ⇒ open formulier
-  function onMouseUpNoDrag() {
-    document.removeEventListener('mousemove', detectMove);
-    if (!moved) openFormulier(btn.textContent);
-  }
-
-  btn.addEventListener('mousedown', onMouseDown);
-
-  // rechterklik = verwijderen blijft ongewijzigd
-  btn.addEventListener('contextmenu', function (e) {
-    e.preventDefault();
-    if (confirm('Tafel verwijderen?')) {
-      btn.remove();
-      fetch('TafelOpslaan.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ actie: 'verwijderen', nummer: btn.textContent })
+        body: fd,
+        headers: { 'Accept': 'application/json' }
       });
+      const text = await resp.text();
+      const data = safeJson(text);
+
+      if (!resp.ok || data.ok === false) throw new Error(data.error || text || 'Serverfout');
+      btn.remove();
+    } catch (err) {
+      console.error(err);
+      alert('Verwijderen mislukt: ' + (err.message || 'Onbekende fout'));
     }
   });
 }
 
+/** ============ Tafels laden & renderen ============ */
+async function laadTafels() {
+  const container = document.querySelector('.plattegrond-container');
+  if (!container) return;
+  container.querySelectorAll('.tafel').forEach(el => el.remove());
 
+  try {
+    const r = await fetch('TafelsOphalen.php?nocache=' + Date.now(), { cache: 'no-store' });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const tafels = await r.json();
 
+    tafels.forEach(t => {
+      // Verwacht: t.id, t.nummer, t.left_px, t.top_px, (optioneel) t.width_px, t.height_px, t.klasse
+      const btn = document.createElement('button');
+      btn.className = (t.klasse ? (t.klasse + ' ') : '') + 'tafel';
+      btn.textContent = t.nummer;
+      btn.dataset.id = t.id;
+      btn.dataset.nummer = t.nummer;
 
+      btn.style.position = 'absolute';
+      btn.style.left = (parseInt(t.left_px, 10) || 0) + 'px';
+      btn.style.top  = (parseInt(t.top_px, 10)  || 0) + 'px';
+      if (t.width_px)  btn.style.width  = parseInt(t.width_px, 10)  + 'px';
+      if (t.height_px) btn.style.height = parseInt(t.height_px, 10) + 'px';
 
-    // Rechterklik = tafel verwijderen
-    btn.addEventListener('contextmenu', function (e) {
-        e.preventDefault();
-        if (confirm('Tafel verwijderen?')) {
-            btn.remove();
-            fetch('TafelOpslaan.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    actie: 'verwijderen',
-                    nummer: btn.textContent
-                })
-            });
-        }
+      maakTafelDraggable(btn);
+      container.appendChild(btn);
     });
-
-
-// Initialiseer bewerkformulier bij laden
-fetch('bewerkFormulier.html')
-    .then(response => response.text())
-    .then(html => {
-        document.getElementById('formulierContainer').innerHTML = html;
-    });
-
-// Functies voor reserveringsbeheer
-function noShowReservering(id, tafelNummer) {
-    if (confirm('No Show markeren?')) {
-        fetch(`NoShowReservering.php?id=${id}`, { method: 'POST' })
-            .then(res => res.json())
-            .then(result => {
-                if (result.success) {
-                    alert('Gemarkeerd als No Show');
-                    openFormulier(tafelNummer);
-                }
-            });
-    }
+  } catch (err) {
+    console.error('Fout bij tafels laden:', err);
+  }
 }
 
+/** ============ Reserveringsformulier/overzicht ============ */
+async function openReserveringsFormulier(tafelKey) {
+  // UI refs
+  const formulier = document.getElementById('reserveringsformulier');
+  const overzicht = document.getElementById('reserveringenOverzicht');
+  const tafelInput = document.getElementById('tafel');
+  const titel = document.getElementById('tafelnummer');
+
+  // Vind de knop om id/nummer te hebben
+  const btn = [...document.querySelectorAll('.tafel')].find(b =>
+    (b.dataset.id && b.dataset.id == tafelKey) ||
+    (b.dataset.nummer && b.dataset.nummer == tafelKey) ||
+    (b.textContent.trim() == tafelKey)
+  );
+  const id = btn?.dataset.id || '';
+  const nummer = btn?.dataset.nummer || btn?.textContent.trim() || String(tafelKey);
+
+  titel.textContent = 'Tafel ' + (nummer || id || tafelKey);
+  tafelInput.value = nummer || id || tafelKey;
+  overzicht.innerHTML = '<p>Bezig met laden…</p>';
+  formulier.style.display = 'block';
+
+  // Probeer 1) ?tafel= & id & nummer, 2) ?table= & id & nummer
+  const qs1 = new URLSearchParams();
+  if (id) qs1.set('id', id);
+  if (nummer) qs1.set('nummer', nummer);
+  qs1.set('tafel', nummer || id);
+
+  const qs2 = new URLSearchParams();
+  if (id) qs2.set('id', id);
+  if (nummer) qs2.set('nummer', nummer);
+  qs2.set('table', nummer || id);
+
+  const urls = [
+    `TafelReserveringen.php?${qs1.toString()}`,
+    `TafelReserveringen.php?${qs2.toString()}`
+  ];
+
+  let lastErr = null;
+  for (const url of urls) {
+    try {
+      logReq('GET reserveringen', url);
+      const resp = await fetch(url, { headers: { 'Accept':'application/json' } });
+      const text = await resp.text();
+      let data; try { data = JSON.parse(text); } catch { data = { ok:false, error:text }; }
+
+      if (!resp.ok || data.ok === false) throw new Error(data.error || text || `HTTP ${resp.status}`);
+
+      const lijst = Array.isArray(data) ? data : (data.reserveringen || []);
+      huidigeReserveringen = lijst.slice();
+
+      if (!lijst.length) {
+        overzicht.innerHTML = `<h3>Reserveringen voor tafel ${nummer || id}</h3><p>Geen reserveringen gevonden.</p>`;
+      } else {
+        lijst.sort((a, b) => new Date(`${a.datum}T${a.tijd}`) - new Date(`${b.datum}T${b.tijd}`));
+        overzicht.innerHTML = `
+          <h3>Reserveringen voor tafel ${nummer || id}</h3>
+          <ul>
+            ${lijst.map(res => `
+              <li>
+                ${res.datum} ${res.tijd} - ${res.naam} (${Number(res.personen)||0} personen)
+                <button onclick="bewerkReservering(${res.id})">Bewerk</button>
+                <button onclick="verwijderReservering(${res.id}, '${nummer || id}')">Verwijder</button>
+                <button onclick="noShowReservering(${res.id}, '${nummer || id}')">No Show</button>
+              </li>
+            `).join('')}
+          </ul>
+        `;
+      }
+      return; // klaar zodra één variant werkt
+    } catch (e) {
+      console.warn('Reserveringen poging faalde:', e.message);
+      lastErr = e;
+    }
+  }
+
+  overzicht.innerHTML = `<p style="color:#b00020;">Fout bij laden reserveringen: ${lastErr?.message || 'Onbekende fout'}</p>`;
+}
+
+
+// helper blijft hetzelfde
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/** ============ Tafel toevoegen ============ */
+async function tafelToevoegen() {
+  const container = document.querySelector('.plattegrond-container');
+  if (!container) return;
+
+  const nieuw = document.createElement('button');
+  nieuw.className = 'tafel';
+  nieuw.textContent = '...';
+  nieuw.style.left = '20px';
+  nieuw.style.top  = '20px';
+  container.appendChild(nieuw);
+
+  const payload = {
+    nummer: '',      // of vraag dit aan de gebruiker
+    type: 'rond',    // of 'negen'/'tien'/'elf' afhankelijk van je CSS
+    x: 20,
+    y: 20
+  };
+
+  try {
+    const resp = await fetch('TafelOpslaan.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload),
+      cache: 'no-store'
+    });
+
+    const text = await resp.text();
+    let data; try { data = JSON.parse(text); } catch { data = { parseError: true, raw: text }; }
+    console.log('Opslaan nieuwe tafel → response:', data);
+
+    if (!data || data.parseError || !data.success) {
+      alert('Opslaan mislukt: ' + (data?.error || 'onbekende fout'));
+      return;
+    }
+
+    nieuw.dataset.id = data.id;
+    nieuw.textContent = data.nummer ? data.nummer : data.id;
+    maakTafelDraggable(nieuw);
+
+  } catch (err) {
+    console.error('Fout bij opslaan nieuwe tafel:', err);
+    alert('Er ging iets mis bij het opslaan. Zie console.');
+  }
+}
+
+
+
+/** ============ Drag & drop + positie opslaan ============ */
+function maakTafelDraggable(tafelEl) {
+  let startX, startY, offsetX, offsetY, dragging = false;
+  const container = document.querySelector('.plattegrond-container');
+
+  tafelEl.addEventListener('mousedown', (e) => {
+    dragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    const rect = tafelEl.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    offsetX = startX - rect.left;
+    offsetY = startY - rect.top;
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+
+  function onMove(e) {
+    if (!dragging) return;
+    const containerRect = container.getBoundingClientRect();
+    let left = e.clientX - containerRect.left - offsetX;
+    let top  = e.clientY - containerRect.top  - offsetY;
+
+    // binnen container houden
+    left = Math.max(0, Math.min(left, container.clientWidth  - tafelEl.offsetWidth));
+    top  = Math.max(0, Math.min(top,  container.clientHeight - tafelEl.offsetHeight));
+
+    tafelEl.style.left = left + 'px';
+    tafelEl.style.top  = top  + 'px';
+  }
+
+  async function onUp() {
+    if (!dragging) return;
+    dragging = false;
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+
+    const id = tafelEl.dataset.id;
+    if (!id) {
+      console.warn('Geen data-id op tafel element.');
+      return;
+    }
+
+    const x = parseInt(tafelEl.style.left, 10) || 0;
+    const y = parseInt(tafelEl.style.top, 10) || 0;
+
+    try {
+      const resp = await fetch('TafelsBijwerken.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ action: 'update', id, x, y })
+      });
+      const data = await resp.json();
+      console.log('Tafel bijgewerkt:', data);
+    } catch (err) {
+      console.error('Fout bij bijwerken:', err);
+    }
+  }
+}
+
+async function verwijderTafel(id) {
+  if (!confirm('Weet je zeker dat je deze tafel wilt verwijderen?')) return;
+
+  try {
+    const resp = await fetch('TafelsBijwerken.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ action: 'delete', id })
+    });
+    const data = await resp.json();
+    console.log('Tafel verwijderd:', data);
+
+    if (data.success) {
+      const el = document.querySelector(`.tafel[data-id="${id}"]`);
+      if (el) el.remove();
+    } else {
+      alert('Verwijderen mislukt: ' + data.error);
+    }
+  } catch (err) {
+    console.error('Fout bij verwijderen:', err);
+  }
+}
+
+
+
+/** ============ Helpers ============ */
+function safeJson(text) {
+  try { return JSON.parse(text); } catch { return { ok:false, error: text }; }
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/** ============ Expose voor knoppen in HTML ============ */
+window.tafelToevoegen = tafelToevoegen;
+window.openReserveringsFormulier = openReserveringsFormulier;
+
 function bewerkReservering(id) {
-    const res = huidigeReserveringen.find(r => r.id == id);
-    if (!res) return alert("Niet gevonden");
-    document.getElementById('editId').value = res.id;
-    document.getElementById('editNaam').value = res.naam;
-    document.getElementById('editDatum').value = res.datum;
-    document.getElementById('editTijd').value = res.tijd;
-    document.getElementById('editPersonen').value = res.personen;
-    document.getElementById('bewerkFormulier').style.display = 'flex';
+  console.log("Bewerk reservering:", id);
+  // Hier kun je je bewerkformulier tonen
+  document.getElementById("bewerkFormulier").style.display = "flex";
+  document.getElementById("editId").value = id;
 }
 
 function sluitBewerkFormulier() {
-    document.getElementById('bewerkFormulier').style.display = 'none';
+  document.getElementById("bewerkFormulier").style.display = "none";
 }
 
-function verwijderReservering(id, tafelNummer) {
-    if (confirm('Weet je zeker dat je wilt verwijderen?')) {
-        fetch(`VerwijderReservering.php?id=${id}`, { method: 'POST' })
-            .then(res => res.json())
-            .then(result => {
-                if (result.success) {
-                    alert('Verwijderd!');
-                    openFormulier(tafelNummer);
-                }
-            });
-    }
-}
 
-// Bewerken opslaan
-document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('editForm')?.addEventListener('submit', function (e) {
-        e.preventDefault();
-        const id = document.getElementById('editId').value;
-        const naam = document.getElementById('editNaam').value;
-        const datum = document.getElementById('editDatum').value;
-        const tijd = document.getElementById('editTijd').value;
-        const personen = document.getElementById('editPersonen').value;
-
-        fetch('BewerkReserveringen.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id, naam, datum, tijd, personen })
-        })
-            .then(res => res.json())
-            .then(result => {
-                if (result.success) {
-                    alert('Bijgewerkt!');
-                    sluitBewerkFormulier();
-                    openFormulier(document.getElementById("tafel").value);
-                }
-            });
+function verwijderReservering(id) {
+  if (!confirm("Weet je zeker dat je deze reservering wilt verwijderen?")) return;
+  fetch(`VerwijderReservering.php?id=${encodeURIComponent(id)}`)
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) {
+        console.error("Verwijder-fout:", data.error || data);
+        alert("Verwijderen mislukt: " + (data.error || "Onbekende fout"));
+        return;
+      }
+      const tafelId = document.getElementById("tafel").value;
+      if (tafelId) openFormulier(tafelId);
+    })
+    .catch(err => {
+      console.error("Fout bij verwijderen:", err);
+      alert("Netwerkfout bij verwijderen.");
     });
+}
 
-    // Tafels ophalen
-    fetch('TafelsOphalen.php')
-        .then(res => res.json())
-        .then(tafels => {
-            const container = document.querySelector('.plattegrond-container');
-            tafels.forEach(t => {
-                const btn = document.createElement('button');
-                btn.className = 'tafel';
-                btn.textContent = t.nummer;
-                btn.style.left = t.left_px + 'px';
-                btn.style.top = t.top_px + 'px';
-                container.appendChild(btn);
-                maakTafelDraggable(btn);
-            });
-        })
-        .catch(err => console.error("Fout bij laden tafels:", err));
-});
+function noShowReservering(id) {
+  fetch(`NoShowReservering.php?id=${encodeURIComponent(id)}`)
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) {
+        console.error("No Show fout:", data.error || data);
+        alert("No Show mislukt: " + (data.error || "Onbekende fout"));
+        return;
+      }
+      // herlaad het overzicht voor de geselecteerde tafel
+      const tafelId = document.getElementById("tafel").value;
+      if (tafelId) openFormulier(tafelId);
+    })
+    .catch(err => {
+      console.error("Fout bij No Show:", err);
+      alert("Netwerkfout bij No Show.");
+    });
+}
 
-// Exporteer functies
-window.bewerkReservering = bewerkReservering;
-window.sluitBewerkFormulier = sluitBewerkFormulier;
+// ------------------
+// Reserveringen laden
+// ------------------
+function laadReserveringen(tafelId) {
+  if (!tafelId) {
+    console.warn("Geen tafel opgegeven bij laadReserveringen()");
+    return;
+  }
+
+  console.log("Reserveringen laden voor tafel:", tafelId);
+
+  fetch("TafelReserveringen.php?tafel=" + encodeURIComponent(tafelId))
+    .then(resp => resp.text())
+    .then(data => {
+      const overzicht = document.getElementById("reserveringenOverzicht");
+      overzicht.innerHTML = data;
+
+      // Koppel opnieuw knoppen voor bewerken/verwijderen/noshow
+      overzicht.querySelectorAll(".bewerk-btn").forEach(btn => {
+        btn.addEventListener("click", () => bewerkReservering(btn.dataset.id));
+      });
+      overzicht.querySelectorAll(".verwijder-btn").forEach(btn => {
+        btn.addEventListener("click", () => verwijderReservering(btn.dataset.id));
+      });
+      overzicht.querySelectorAll(".noshow-btn").forEach(btn => {
+        btn.addEventListener("click", () => noShowReservering(btn.dataset.id));
+      });
+    })
+    .catch(err => {
+      console.error("Fout bij laden reserveringen:", err);
+      const overzicht = document.getElementById("reserveringenOverzicht");
+      overzicht.innerHTML = "<p>Fout bij laden reserveringen.</p>";
+    });
+}
+// ---------- FORMULIER OPENEN + LADEN ----------
+function openFormulier(tafelId) {
+  const form = document.getElementById('reserveringsformulier');
+  const tafelInput = document.getElementById('tafel');
+  const titel = document.getElementById('tafelnummer');
+
+  if (!tafelId) {
+    console.warn('openFormulier zonder tafelId aangeroepen');
+    return;
+  }
+  tafelInput.value = tafelId;
+  if (titel) titel.textContent = 'Tafel ' + tafelId;
+  if (form) form.style.display = 'block';
+
+  laadReserveringen(tafelId);
+}
+
+// ---------- RESERVERINGEN LADEN VOOR TAFEL ----------
+function laadReserveringen(tafelId) {
+  const overzicht = document.getElementById('reserveringenOverzicht');
+  if (!tafelId) {
+    console.warn('Geen tafel opgegeven bij laadReserveringen()');
+    if (overzicht) overzicht.innerHTML = '<p>Geen tafel opgegeven.</p>';
+    return;
+  }
+
+  fetch('TafelReserveringen.php?table=' + encodeURIComponent(tafelId))
+    .then(r => r.json())
+    .then(data => {
+      if (!Array.isArray(data) || data.length === 0) {
+        overzicht.innerHTML = '<p>Geen reserveringen voor deze tafel.</p>';
+        return;
+      }
+      overzicht.innerHTML = `
+        <table>
+          <thead>
+            <tr><th>Naam</th><th>Datum</th><th>Tijd</th><th>Personen</th><th>Acties</th></tr>
+          </thead>
+          <tbody>
+            ${data.map(r => `
+              <tr data-id="${r.id}">
+                <td>${r.naam}</td>
+                <td>${r.datum}</td>
+                <td>${r.tijd}</td>
+                <td>${r.personen}</td>
+                <td>
+                  <button class="bewerk-btn"   data-id="${r.id}">Bewerk</button>
+                  <button class="verwijder-btn" data-id="${r.id}">Verwijder</button>
+                  <button class="noshow-btn"    data-id="${r.id}">No Show</button>
+                </td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+
+      // koppel events
+      overzicht.querySelectorAll('.bewerk-btn').forEach(btn => {
+        btn.addEventListener('click', () => bewerkReservering(btn.dataset.id));
+      });
+      overzicht.querySelectorAll('.verwijder-btn').forEach(btn => {
+        btn.addEventListener('click', () => verwijderReservering(btn.dataset.id));
+      });
+      overzicht.querySelectorAll('.noshow-btn').forEach(btn => {
+        btn.addEventListener('click', () => noShowReservering(btn.dataset.id));
+      });
+    })
+    .catch(err => {
+      console.error('Fout bij laden reserveringen:', err);
+      overzicht.innerHTML = '<p>Fout bij laden reserveringen.</p>';
+    });
+}
+
+// ---------- ACTIES ----------
+function verwijderReservering(id) {
+  if (!id) { alert('Geen ID in knop gevonden'); return; }
+  if (!confirm('Weet je zeker dat je deze reservering wilt verwijderen?')) return;
+
+  fetch(`VerwijderReservering.php?id=${encodeURIComponent(id)}`)
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) {
+        console.error('Verwijder-fout:', data);
+        alert('Verwijderen mislukt: ' + (data.error || 'Onbekende fout'));
+        return;
+      }
+      const tafelId = document.getElementById('tafel').value;
+      if (tafelId) openFormulier(tafelId);  // herladen
+    })
+    .catch(err => {
+      console.error('Fout bij verwijderen:', err);
+      alert('Netwerkfout bij verwijderen.');
+    });
+}
+
+function noShowReservering(id) {
+  if (!id) { alert('Geen ID in knop gevonden'); return; }
+
+  fetch(`NoShowReservering.php?id=${encodeURIComponent(id)}`)
+    .then(r => r.json())
+    .then(data => {
+      if (!data.success) {
+        console.error('No Show fout:', data.error || data);
+        alert('No Show mislukt: ' + (data.error || 'Onbekende fout'));
+        return;
+      }
+      const tafelId = document.getElementById('tafel').value;
+      if (tafelId) openFormulier(tafelId);  // herladen
+    })
+    .catch(err => {
+      console.error('Fout bij No Show:', err);
+      alert('Netwerkfout bij No Show.');
+    });
+}
+
+// ---- maak globaal beschikbaar (voorkomt "is not defined") ----
+window.openFormulier = openFormulier;
+window.laadReserveringen = laadReserveringen;
 window.verwijderReservering = verwijderReservering;
 window.noShowReservering = noShowReservering;
-window.openFormulier = openFormulier;
-window.tafelToevoegen = tafelToevoegen;
+// (bewerkReservering/ sluitBewerkFormulier evt. ook)
+
+document.getElementById('editForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const data = {
+    id: document.getElementById('editId').value,
+    naam: document.getElementById('editNaam').value,
+    datum: document.getElementById('editDatum').value,
+    tijd: document.getElementById('editTijd').value,
+    personen: document.getElementById('editPersonen').value
+  };
+
+  const response = await fetch('BewerkReserveringen.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+
+  const result = await response.json();
+  if (result.success) {
+    alert('Reservering opgeslagen!');
+    sluitBewerkFormulier();
+    laadReserveringen(); // of welke functie de tabel herlaadt
+  } else {
+    alert('Fout: ' + (result.error || 'Opslaan mislukt'));
+  }
+});
